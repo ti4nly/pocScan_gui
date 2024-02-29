@@ -1,0 +1,59 @@
+info:
+  vulId:
+  detail:
+  fofaQuery: title=""
+  expType: command # 命令执行
+#  expType: upload 文件上传
+#  {{fileName}}为工具中输入的文件上传名
+#  {{fileContent}}为工具中输入的上传文件内容
+#  {{command}}为工具中输入的命令
+
+
+#用来输出漏洞利用结果
+variable:
+  - "{{rootUrl}}/{{filename}}"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/upload.php"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}"
+        Content-type: multipart/form-data; boundary=7e7c522afffbf709a066ccb2ae435fbb
+        Accept: application/json, text/javascript, */*; q=0.01
+      redirect: false
+      dataType: text
+      data: "--7e7c522afffbf709a066ccb2ae435fbb\r\nContent-Disposition: form-data; name=\"uploadfile\"; filename=\"{{fileName}}\"\r\n\r\n{{fileContent}}\r\n--7e7c522afffbf709a066ccb2ae435fbb--"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - SUCCESS
+        place: body
+        condition: and
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/{{filename}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+#      如果是命令执行需要有一个regex的checkType，用于正则获取出命令执行后返回的数据(如下就是将命令执行返回包数据全部获取并展示出来)
+#      - checkType: regex
+#        desireds:
+#          - "[\\S\\s]*"
+#        place: body
+#        condition: and
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

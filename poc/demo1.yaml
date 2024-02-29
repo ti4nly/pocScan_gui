@@ -1,0 +1,51 @@
+info:
+  vulId:
+  detail:
+  fofaQuery: title=""
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/login.php"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}"
+        Content-type: application/x-www-form-urlencoded
+        Accept: application/json, text/javascript, */*; q=0.01
+      redirect: false
+      dataType: text
+      data: "username=admin&password=admin@123"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - SUCCESS
+        place: body
+        condition: and
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/phpinfo.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - PHP Extension
+          - PHP Version
+          - phpinfo
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

